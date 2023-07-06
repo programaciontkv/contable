@@ -95,8 +95,8 @@ class Reg_nota_debito extends CI_Controller {
 				);
 		$this->load->view('layout/header',$this->menus());
 		$this->load->view('layout/menu',$this->menus());
-		$this->load->view('Reg_nota_debito/lista',$data);
-		$modulo=array('modulo'=>'Reg_nota_debito');
+		$this->load->view('reg_nota_debito/lista',$data);
+		$modulo=array('modulo'=>'reg_nota_debito');
 		$this->load->view('layout/footer',$modulo);
 	}
 
@@ -160,12 +160,12 @@ class Reg_nota_debito extends CI_Controller {
 					                        'rnd_id'=>'',
 										),
 						'cns_det'=>'',
-						'action'=>base_url().'Reg_nota_debito/guardar/'.$opc_id,
+						'action'=>base_url().'reg_nota_debito/guardar/'.$opc_id,
 						'valida_asiento'=>$valida_asiento,
 						);
 			
-			$this->load->view('Reg_nota_debito/form',$data);
-			$modulo=array('modulo'=>'Reg_nota_debito');
+			$this->load->view('reg_nota_debito/form',$data);
+			$modulo=array('modulo'=>'reg_nota_debito');
 			$this->load->view('layout/footer',$modulo);
 		}else{
 			redirect(base_url().'inicio');
@@ -292,11 +292,11 @@ class Reg_nota_debito extends CI_Controller {
 			
 				$rst_opc=$this->opcion_model->lista_una_opcion($opc_id);
 				// redirect(base_url().strtolower($rst_opc->opc_direccion).$opc_id);
-				redirect(base_url().'Reg_nota_debito/show_frame/'. $rnd_id.'/'.$opc_id);
+				redirect(base_url().'reg_nota_debito/show_frame/'. $rnd_id.'/'.$opc_id);
 			
 			}else{
 				$this->session->set_flashdata('error','No se pudo guardar');
-				redirect(base_url().'Reg_nota_debito/nuevo/'.$opc_id);
+				redirect(base_url().'reg_nota_debito/nuevo/'.$opc_id);
 			}
 		}else{
 			$this->nuevo($opc_id);
@@ -336,12 +336,12 @@ class Reg_nota_debito extends CI_Controller {
 						'mensaje'=> $mensaje,
 						'nota'=> $this->reg_nota_debito_model->lista_una_nota($id),
 						'cns_det'=>$this->reg_nota_debito_model->lista_detalle_nota($id),
-						'action'=>base_url().'Reg_nota_debito/actualizar/'.$opc_id,
+						'action'=>base_url().'reg_nota_debito/actualizar/'.$opc_id,
 						'valida_asiento'=>$valida_asiento,
 						);
 			
-			$this->load->view('Reg_nota_debito/form',$data);
-			$modulo=array('modulo'=>'Reg_nota_debito');
+			$this->load->view('reg_nota_debito/form',$data);
+			$modulo=array('modulo'=>'reg_nota_debito');
 			$this->load->view('layout/footer',$modulo);
 		}else{
 			redirect(base_url().'inicio');
@@ -473,11 +473,11 @@ class Reg_nota_debito extends CI_Controller {
 			
 				$rst_opc=$this->opcion_model->lista_una_opcion($opc_id);
 				// redirect(base_url().strtolower($rst_opc->opc_direccion).$opc_id);
-				redirect(base_url().'Reg_nota_debito/show_frame/'. $rnd_id.'/'.$opc_id);
+				redirect(base_url().'reg_nota_debito/show_frame/'. $rnd_id.'/'.$opc_id);
 			
 			}else{
 				$this->session->set_flashdata('error','No se pudo guardar');
-				redirect(base_url().'Reg_nota_debito/editar/'.$id.'/'.$opc_id);
+				redirect(base_url().'reg_nota_debito/editar/'.$id.'/'.$opc_id);
 			}
 		}else{
 			$this->editar($id,$opc_id);
@@ -569,12 +569,12 @@ class Reg_nota_debito extends CI_Controller {
 		$permisos=$this->backend_model->get_permisos($opc_id,$this->session->userdata('s_rol'));
 		$rst_opc=$this->opcion_model->lista_una_opcion($opc_id);
 		$rst_cja=$this->caja_model->lista_una_caja($rst_opc->opc_caja);
-		$etiqueta='Reg_nota_debito.pdf';
+		$etiqueta='reg_nota_debito.pdf';
     	if($permisos->rop_reporte){
     		$data=array(
 					'titulo'=>'Registro Notas de Debito '.ucfirst(strtolower($rst_cja->emp_nombre)),
 					'regresar'=>base_url().strtolower($rst_opc->opc_direccion).$rst_opc->opc_id,
-					'direccion'=>"Reg_nota_debito/show_pdf/$id/$opc_id/$etiqueta",
+					'direccion'=>"reg_nota_debito/show_pdf/$id/$opc_id/$etiqueta",
 					'fec1'=>$fec1,
 					'fec2'=>$fec2,
 					'txt'=>$text,
@@ -590,7 +590,7 @@ class Reg_nota_debito extends CI_Controller {
 			$this->load->view('layout/header',$this->menus());
 			$this->load->view('layout/menu',$this->menus());
 			$this->load->view('pdf/frame_fecha',$data);
-			$modulo=array('modulo'=>'Reg_nota_debito');
+			$modulo=array('modulo'=>'reg_nota_debito');
 			$this->load->view('layout/footer',$modulo);
 		}
     	
@@ -626,7 +626,7 @@ class Reg_nota_debito extends CI_Controller {
 						'asientos'=>$this->asiento_model->lista_un_asiento_modulo($id,'7'),
 						'cns_det'=>$cns_det,
 						);
-			$this->html2pdf->filename('Reg_nota_debito.pdf');
+			$this->html2pdf->filename('reg_nota_debito.pdf');
 			$this->html2pdf->paper('a4', 'portrait');
     		$this->html2pdf->html(utf8_decode($this->load->view('pdf/pdf_reg_nota_debito', $data, true)));
     		$this->html2pdf->folder('./pdfs/');
@@ -668,7 +668,7 @@ class Reg_nota_debito extends CI_Controller {
 		$rst_cja=$this->caja_model->lista_una_caja($rst_opc->opc_caja);
 
     	$titulo='REGISTRO NOTA DE DEBITO '.ucfirst(strtolower($rst_cja->emp_nombre));
-    	$file="Reg_nota_debito".date('Ymd');
+    	$file="reg_nota_debito".date('Ymd');
     	$data=$_POST['datatodisplay'];
     	$this->export_excel->to_excel($data,$file,$titulo,$fec1,$fec2);
     }
