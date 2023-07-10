@@ -925,7 +925,9 @@ class Nota_credito extends CI_Controller {
 		}
 	}
 
-	public function load_producto($id,$inven,$ctr_inv,$emi){
+	public function load_producto($id,$inven,$ctr_inv,$emi,$fac){
+
+		$iva = $this->factura_model->lista_impuesto_detalle_factura($fac);
 
 		$rst=$this->producto_comercial_model->lista_un_producto_cod($id);
 		if(empty($rst)){
@@ -966,6 +968,12 @@ class Nota_credito extends CI_Controller {
 	        }    
 	        
 	        $precio=$rst->mp_e;	
+
+			if ($rst->mp_h==12) {
+				$impuesto = $iva->iva;
+			}else{
+				$impuesto = $rst->mp_h;
+			}
 	        
 			$data=array(
 						'pro_id'=>$rst->id,
@@ -973,7 +981,8 @@ class Nota_credito extends CI_Controller {
 						'pro_descripcion'=>$rst->mp_d,
 						'pro_codigo'=>$rst->mp_c,
 						'pro_precio'=>$precio,
-						'pro_iva'=>$rst->mp_h,
+						//'pro_iva'=>$rst->mp_h,
+						'pro_iva'=>$impuesto,
 						'pro_descuento'=>$rst->mp_g,
 						'pro_unidad'=>$rst->mp_q,
 						'inventario'=>$inv,
@@ -1090,8 +1099,28 @@ class Nota_credito extends CI_Controller {
 			$rst_cja=$this->caja_model->lista_una_caja($rst_opc->opc_caja);
 
 			///recupera detalle
-			$cns_dt=$this->nota_credito_model->lista_detalle_nota($id);
+
+			$rst_iva = $this->configuracion_model->lista_una_configuracion('30');
+
+			$redu_iva = $rst_iva->con_valor;
+			$por_iva = $rst_iva->con_valor2;
+			$cod_iva = $rst_iva->con_valor3;
+
 			$iva=  $this->nota_credito_model->lista_detalle_iva($id);
+
+
+			if (empty($iva)) {
+			if($redu_iva==0){          
+			$t_iva= $por_iva;
+			}else{
+			$t_iva= 12;
+			}
+			} else {
+			$t_iva = $iva->iva;
+			}
+
+
+			$cns_dt=$this->nota_credito_model->lista_detalle_nota($id);
 			$cns_det=array();
 			foreach ($cns_dt as $rst_dt) {
 	        
@@ -1122,7 +1151,7 @@ class Nota_credito extends CI_Controller {
 						'cancelar'=>base_url().strtolower($rst_opc->opc_direccion).$rst_opc->opc_id,
 						'nota'=>$this->nota_credito_model->lista_una_nota($id),
 						'cns_det'=>$cns_det,
-						'iva'=>$iva->iva
+						'iva'=>$t_iva
 						);
 			$this->html2pdf->filename('nota_credito.pdf');
 			$this->html2pdf->paper('a4', 'portrait');
